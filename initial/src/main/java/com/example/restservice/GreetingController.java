@@ -9,7 +9,11 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
 @RestController
+@EnableJpaRepositories(repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
 public class GreetingController {
 
     private static final String template = "Hello, %s!";
@@ -36,6 +40,25 @@ public class GreetingController {
         newGreeting.setContent(String.format(template, name));
         repository.save(newGreeting);
         return newGreeting;
+    }
+
+    @ApiOperation(value = "Edit existing greeting")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully edited greeting"),
+            @ApiResponse(code = 400, message = "Invalid request parameters")
+    })
+    @PostMapping("/edit/{id}/{name}")
+    public Greeting editGreeting(@PathVariable long id, @PathVariable String name) {
+        Greeting target = repository.findById(id).get();
+        target.setContent(name);
+        repository.save(target);
+        return target;
+    }
+
+    @ApiOperation(value = "Get the revision history for a given greeting id")
+    @GetMapping("/history")
+    public void getHistory(@RequestParam(value = "id") long id) {
+        System.out.println(repository.findRevisions(id));
     }
 
 }

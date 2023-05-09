@@ -8,12 +8,16 @@ import lombok.EqualsAndHashCode;
 
 import jakarta.persistence.*;
 
+import org.hibernate.envers.Audited;
+
 @Entity
 @EqualsAndHashCode
 @Getter
 @Table(name="greetings")
+@Audited
 public class Greeting {
-    @Id @GeneratedValue(strategy=GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     long id;
     
     @Setter

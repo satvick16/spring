@@ -6,19 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 @EqualsAndHashCode
-@NoArgsConstructor
+@Getter
+@Table(name="greetings")
 public class Greeting {
-    @Id @Getter @Setter
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Id @GeneratedValue(strategy=GenerationType.AUTO)
     long id;
     
-    @Getter @Setter
+    @Setter
+    @Column(name="content")
     String content;
 }

@@ -1,24 +1,28 @@
 package com.example.restservice;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.*;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 public class GreetingController {
 
     private static final String template = "Hello, %s!";
-    GreetingRepository repository = new GreetingRepository();
+
+    @Autowired
+    private GreetingRepository repository;
 
     @ApiOperation(value = "Get all previous greetings created")
     @GetMapping("/greeting")
     public List<Greeting> getAllGreetings() {
-        return repository.findAll();
+        List<Greeting> greetings = new ArrayList<>();
+        repository.findAll().forEach(greetings::add);
+        return greetings;
     }
 
     @ApiOperation(value = "Create a new greeting")
@@ -28,7 +32,8 @@ public class GreetingController {
     })
     @PostMapping("/greeting")
     public Greeting postGreeting(@RequestParam(value = "name", defaultValue = "World") String name) {
-        Greeting newGreeting = new Greeting(String.format(template, name));
+        Greeting newGreeting = new Greeting();
+        newGreeting.setContent(String.format(template, name));
         repository.save(newGreeting);
         return newGreeting;
     }

@@ -53,8 +53,8 @@ public class GreetingController {
 
     @ApiOperation(value = "Get the revision history for a given greeting id")
     @GetMapping("/history/{id}")
-    public void getGreetingHistory(@PathVariable Long id) {
-        return;
+    public String getGreetingHistory(@PathVariable Long id) {
+        return repository.findRevisions(id).toString();
     }
 
 }

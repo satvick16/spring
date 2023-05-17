@@ -1,6 +1,7 @@
 package com.example.restservice;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -8,6 +9,8 @@ import io.swagger.annotations.ApiResponses;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.history.Revision;
 
 @RestController
 public class GreetingController {
@@ -53,8 +56,21 @@ public class GreetingController {
 
     @ApiOperation(value = "Get the revision history for a given greeting id")
     @GetMapping("/history/{id}")
-    public String getGreetingHistory(@PathVariable Long id) {
-        return repository.findRevisions(id).toString();
+    public Map<String, String> getGreetingHistory(@PathVariable Long id) {
+        Object[] revisionArray = repository.findRevisions(id).getContent().toArray();
+        Map<String, String> result = new HashMap<>();
+
+        for (Object element : revisionArray) {
+            org.springframework.data.history.Revision revision = (org.springframework.data.history.Revision) element;
+            org.springframework.data.envers.repository.support.DefaultRevisionMetadata data = (org.springframework.data.envers.repository.support.DefaultRevisionMetadata) revision.getMetadata();
+
+            String date = data.getRevisionDate().get().toString();
+            String type = data.getRevisionType().toString();
+
+            result.put(date, type);
+        }
+
+        return result;
     }
 
 }

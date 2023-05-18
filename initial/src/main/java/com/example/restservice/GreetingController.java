@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.history.Revision;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200/") 
 public class GreetingController {
 
     private static final String template = "Hello, %s!";
@@ -34,11 +35,11 @@ public class GreetingController {
             @ApiResponse(code = 400, message = "Invalid request parameters")
     })
     @PostMapping("/greeting")
-    public Greeting postGreeting(@RequestParam(value = "name", defaultValue = "World") String name) {
+    public String postGreeting(@RequestParam(value = "name", defaultValue = "World") String name) {
         Greeting newGreeting = new Greeting();
         newGreeting.setContent(String.format(template, name));
         repository.save(newGreeting);
-        return newGreeting;
+        return "Greeting successfully created!";
     }
 
     @ApiOperation(value = "Edit existing greeting")

@@ -57,9 +57,9 @@ public class GreetingController {
 
     @ApiOperation(value = "Get the revision history for a given greeting id")
     @GetMapping("/history/{id}")
-    public Map<String, String> getGreetingHistory(@PathVariable Long id) {
+    public List<List<String>> getGreetingHistory(@PathVariable Long id) {
         Object[] revisionArray = repository.findRevisions(id).getContent().toArray();
-        Map<String, String> result = new HashMap<>();
+        List<List<String>> result = new ArrayList<List<String>>();
 
         for (Object element : revisionArray) {
             org.springframework.data.history.Revision revision = (org.springframework.data.history.Revision) element;
@@ -68,7 +68,12 @@ public class GreetingController {
             String date = data.getRevisionDate().get().toString();
             String type = data.getRevisionType().toString();
 
-            result.put(date, type);
+            List<String> x = new ArrayList<String>();
+
+            x.add(date);
+            x.add(type);
+
+            result.add(x);
         }
 
         return result;
